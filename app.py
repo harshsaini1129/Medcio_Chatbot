@@ -67,4 +67,5 @@ def chat():
 
 if __name__ == '__main__':
     # use_reloader=False is the key here
-    app.run(port=5000, debug=True)
+    app.run(host="0.0.0.0", port=8080, debug=True)
+
