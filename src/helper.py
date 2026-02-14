@@ -1,11 +1,12 @@
-from langchain_community.document_loaders import PyPDFLoader, DirectoryLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community.document_loaders import PyPDFLoader, DirectoryLoader 
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_huggingface import HuggingFaceEmbeddings
 from typing import List
-from langchain.schema import Document
+from langchain_core.documents import Document
+
 
 #Extract Data from the PDF File
-def load_pdf_files(data):
+def load_pdf_file(data):
     loader = DirectoryLoader(
         data,
         glob="**/*.pdf",
@@ -42,11 +43,8 @@ def text_split(minimal_docs):
 # object which we can use to create vector store and generate embeddings for 
 # our text chunks
 def download_embeddings():
-    #Download the hugging face model and return
     model_name ="sentence-transformers/all-MiniLM-L6-v2"
-    embeddings=HuggingFaceEmbeddings(
-        model_name=model_name
-    )
+    embeddings = HuggingFaceEmbeddings(model_name=model_name)
     return embeddings
 
-#copy all the helping functions from trials.ipynb 
+#copy all the above functions in helper.py and import them in store_index.py to use them there. This will help us to keep our code organized and modular. We can also reuse these functions in other parts of our code if needed.
