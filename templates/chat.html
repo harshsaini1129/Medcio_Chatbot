@@ -1,81 +1,175 @@
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
 <!DOCTYPE html>
-<html>
-	<head>
-		<title>Chatbot</title>
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}"/>
-	</head>
-	
-	
-	<body>
-		<div class="container-fluid h-100">
-			<div class="row justify-content-center h-100">		
-				<div class="col-md-8 col-xl-6 chat">
-					<div class="card">
-						<div class="card-header msg_head">
-							<div class="d-flex bd-highlight">
-								<div class="img_cont">
-									<img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img">
-									<!-- <img src="https://www.prdistribution.com/spirit/uploads/pressreleases/2019/newsreleases/d83341deb75c4c4f6b113f27b1e42cd8-chatbot-florence-already-helps-thousands-of-patients-to-remember-their-medication.png" class="rounded-circle user_img"> -->
-									<span class="online_icon"></span>
-								</div>
-								<div class="user_info">
-									<span>Medical Chatbot</span>
-									<p>Ask me anything!</p>
-								</div>
-							</div>
-						</div>
-						<div id="messageFormeight" class="card-body msg_card_body">
-							
-							
-						</div>
-						<div class="card-footer">
-							<form id="messageArea" class="input-group">
-                                <input type="text" id="text" name="msg" placeholder="Type your message..." autocomplete="off" class="form-control type_msg" required/>
-								<div class="input-group-append">
-									<button type="submit" id="send" class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></button>
-								</div>
-							</form>
-						</div>
-					</div>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Medico — Ask anything</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+
+	<div class="rail">
+		<div class="rail-mark" aria-hidden="true">
+			<svg viewBox="0 0 24 24" width="18" height="18">
+				<path d="M12 2 L12 22 M2 12 L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+			</svg>
+		</div>
+	</div>
+
+	<main class="chat-shell">
+		<header class="chat-header">
+			<div class="header-id">
+				<div class="vitals">
+					<img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" alt="" class="vitals-img" />
+					<span class="vitals-dot"></span>
+				</div>
+				<div class="header-text">
+					<h1>Medico</h1>
+					<p>Clinical knowledge assistant &middot; reference only, not a diagnosis</p>
 				</div>
 			</div>
-		</div>
-		
-		<script>
-			$(document).ready(function() {
-				$("#messageArea").on("submit", function(event) {
-					const date = new Date();
-					const hour = date.getHours();
-					const minute = date.getMinutes();
-					const str_time = hour+":"+minute;
-					var rawText = $("#text").val();
+			<div class="header-rule" aria-hidden="true"></div>
+		</header>
 
-					var userHtml = '<div class="d-flex justify-content-end mb-4"><div class="msg_cotainer_send">' + rawText + '<span class="msg_time_send">'+ str_time + '</span></div><div class="img_cont_msg"><img src="https://i.ibb.co/d5b84Xw/Untitled-design.png" class="rounded-circle user_img_msg"></div></div>';
-					
-					$("#text").val("");
-					$("#messageFormeight").append(userHtml);
+		<section id="messageFormeight" class="thread" aria-live="polite">
+			<div class="entry entry-bot intro">
+				<div class="entry-mark" aria-hidden="true">
+					<img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" alt="" />
+				</div>
+				<div class="entry-body">
+					<p>Hello. Describe a symptom, condition, or question, and I'll answer from the reference material I have access to.</p>
+					<span class="entry-time">ready</span>
+				</div>
+			</div>
+		</section>
 
-					$.ajax({
-						data: {
-							msg: rawText,	
-						},
-						type: "POST",
-						url: "/get",
-					}).done(function(data) {
-						var botHtml = '<div class="d-flex justify-content-start mb-4"><div class="img_cont_msg"><img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img_msg"></div><div class="msg_cotainer">' + data + '<span class="msg_time">' + str_time + '</span></div></div>';
-						$("#messageFormeight").append($.parseHTML(botHtml));
+		<form id="messageArea" class="composer" autocomplete="off">
+			<input
+				type="text"
+				id="text"
+				name="msg"
+				placeholder="Describe what's going on…"
+				autocomplete="off"
+				required
+			/>
+			<button type="submit" id="send" aria-label="Send message">
+				<svg viewBox="0 0 24 24" width="18" height="18">
+					<path d="M3 11.5 L21 3 L13 21 L11 13 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
+				</svg>
+			</button>
+		</form>
+		<p class="disclaimer">Medico can be wrong. Always confirm with a licensed clinician for real medical decisions.</p>
+	</main>
+
+	<script>
+		(function () {
+			const form = document.getElementById('messageArea');
+			const input = document.getElementById('text');
+			const thread = document.getElementById('messageFormeight');
+			const sendBtn = document.getElementById('send');
+
+			const DOCTOR_AVATAR = 'https://cdn-icons-png.flaticon.com/512/387/387569.png';
+			const USER_AVATAR = 'https://cdn-icons-png.flaticon.com/512/4140/4140048.png';
+
+			function timeNow() {
+				const d = new Date();
+				const h = d.getHours().toString().padStart(2, '0');
+				const m = d.getMinutes().toString().padStart(2, '0');
+				return h + ':' + m;
+			}
+
+			function escapeHtml(str) {
+				const div = document.createElement('div');
+				div.textContent = str;
+				return div.innerHTML;
+			}
+
+			function scrollToEnd() {
+				thread.scrollTop = thread.scrollHeight;
+			}
+
+			function appendUser(text) {
+				const el = document.createElement('div');
+				el.className = 'entry entry-user';
+				el.innerHTML =
+					'<div class="entry-mark" aria-hidden="true"><img src="' + USER_AVATAR + '" alt="" /></div>' +
+					'<div class="entry-body">' +
+						'<p>' + escapeHtml(text) + '</p>' +
+						'<span class="entry-time">' + timeNow() + '</span>' +
+					'</div>';
+				thread.appendChild(el);
+				scrollToEnd();
+			}
+
+			function appendBot(html) {
+				const el = document.createElement('div');
+				el.className = 'entry entry-bot';
+				el.innerHTML =
+					'<div class="entry-mark" aria-hidden="true"><img src="' + DOCTOR_AVATAR + '" alt="" /></div>' +
+					'<div class="entry-body">' +
+						'<p>' + html + '</p>' +
+						'<span class="entry-time">' + timeNow() + '</span>' +
+					'</div>';
+				thread.appendChild(el);
+				scrollToEnd();
+			}
+
+			function appendTyping() {
+				const el = document.createElement('div');
+				el.className = 'entry entry-bot typing-entry';
+				el.id = 'typingIndicator';
+				el.innerHTML =
+					'<div class="entry-mark" aria-hidden="true"><img src="' + DOCTOR_AVATAR + '" alt="" /></div>' +
+					'<div class="entry-body">' +
+						'<div class="typing">' +
+							'<span></span><span></span><span></span>' +
+						'</div>' +
+					'</div>';
+				thread.appendChild(el);
+				scrollToEnd();
+			}
+
+			function removeTyping() {
+				const el = document.getElementById('typingIndicator');
+				if (el) el.remove();
+			}
+
+			form.addEventListener('submit', function (event) {
+				event.preventDefault();
+				const rawText = input.value.trim();
+				if (!rawText) return;
+
+				appendUser(rawText);
+				input.value = '';
+				input.focus();
+				sendBtn.disabled = true;
+				appendTyping();
+
+				const body = new URLSearchParams();
+				body.append('msg', rawText);
+
+				fetch('/get', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+					body: body.toString()
+				})
+					.then(function (res) { return res.text(); })
+					.then(function (data) {
+						removeTyping();
+						appendBot(data);
+					})
+					.catch(function () {
+						removeTyping();
+						appendBot('Something went wrong reaching the server. Please try again.');
+					})
+					.finally(function () {
+						sendBtn.disabled = false;
 					});
-					event.preventDefault();
-				});
 			});
-		</script>
-        
-    </body>
+		})();
+	</script>
+</body>
 </html>
